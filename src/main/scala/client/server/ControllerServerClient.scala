@@ -28,7 +28,7 @@ class CommonControllerServerClient(val settings: Settings) extends ControllerSer
         .header("Accept", "application/json")
 
     def constructBaseUri() = new URIBuilder()
-        .setScheme("https")
+        .setScheme(settings.scheme)
         .setHost(settings.host)
         .setPort(settings.port)
         .appendPath("server")
@@ -45,6 +45,9 @@ class CommonControllerServerClient(val settings: Settings) extends ControllerSer
             .build()
         val client = HttpClient.newHttpClient()
         val response = client.send(req, BodyHandlers.ofString())
+        if (response.statusCode() >= 400)
+            throw new RuntimeException(s"[ControllerClient] failed to stop server: code: ${response.statusCode()}")
+
         val res = jsoner.readValue(response.body(), classOf[StartServerResponse])
         res
     }
@@ -60,6 +63,9 @@ class CommonControllerServerClient(val settings: Settings) extends ControllerSer
             .build()
         val client = HttpClient.newHttpClient()
         val response = client.send(req, BodyHandlers.ofString())
+        if (response.statusCode() >= 400)
+            throw new RuntimeException(s"[ControllerClient] failed to stop server: code: ${response.statusCode()}")
+        
         val res = jsoner.readValue(response.body(), classOf[StopServerResponse])
         res
     }
