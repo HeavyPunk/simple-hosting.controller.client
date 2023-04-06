@@ -1,3 +1,5 @@
+package io.github.heavypunk.controller
+package client
 package contracts.server
 
 import com.fasterxml.jackson.annotation.JsonProperty

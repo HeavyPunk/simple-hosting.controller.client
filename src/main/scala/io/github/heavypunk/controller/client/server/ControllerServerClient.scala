@@ -1,7 +1,8 @@
+package io.github.heavypunk.controller
 package client.server
 
-import contracts.server.{StartServerRequest, StartServerResponse, StopServerRequest, StopServerResponse}
-import client.Settings
+import io.github.heavypunk.controller.client.contracts.server.{StartServerRequest, StartServerResponse, StopServerRequest, StopServerResponse}
+import io.github.heavypunk.controller.client.Settings
 import java.net.http.HttpRequest
 import org.apache.hc.core5.net.URIBuilder
 import com.fasterxml.jackson.databind.json.JsonMapper

@@ -1,9 +1,10 @@
 package client
 
-import client.server.CommonControllerServerClient
-import contracts.server.StartServerRequest
+import io.github.heavypunk.controller.client.server.CommonControllerServerClient
+import io.github.heavypunk.controller.client.contracts.server.StartServerRequest
 import java.time.Duration
-import contracts.server.StopServerRequest
+import io.github.heavypunk.controller.client.contracts.server.StopServerRequest
+import io.github.heavypunk.controller.client.Settings
 
 class ClientTestsPlayground extends munit.FunSuite {
     test("Start server playground") {

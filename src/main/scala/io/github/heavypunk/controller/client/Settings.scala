@@ -1,3 +1,4 @@
+package io.github.heavypunk.controller
 package client
 
 import java.net.URI
