@@ -17,7 +17,9 @@ trait ControllerServerClient {
     def stopServer(request: StopServerRequest, timeout: Duration): StopServerResponse
 }
 
-class CommonControllerServerClient(val settings: Settings) extends ControllerServerClient {
+class CommonControllerServerClient (
+    settings: Settings
+) extends ControllerServerClient {
 
     var jsoner = JsonMapper.builder()
         .addModule(DefaultScalaModule)
