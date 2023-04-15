@@ -26,7 +26,7 @@ class CommonControllerServerClient (
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         .build()
 
-    var baseRequest = HttpRequest.newBuilder()
+    def getBaseRequestBuilder() = HttpRequest.newBuilder()
         .header("Content-Type", "application/json")
         .header("Accept", "application/json")
 
@@ -42,7 +42,7 @@ class CommonControllerServerClient (
             .build()
         val content = jsoner.writeValueAsString(request)
 
-        val req = baseRequest.POST(HttpRequest.BodyPublishers.ofString(content))
+        val req = getBaseRequestBuilder.POST(HttpRequest.BodyPublishers.ofString(content))
             .uri(uri)
             .timeout(timeout)
             .build()
@@ -61,7 +61,7 @@ class CommonControllerServerClient (
             .build()
         val content = jsoner.writeValueAsString(request)
 
-        val req = baseRequest.POST(HttpRequest.BodyPublishers.ofString(content))
+        val req = getBaseRequestBuilder.POST(HttpRequest.BodyPublishers.ofString(content))
             .uri(uri)
             .build()
         val client = HttpClient.newHttpClient()
