@@ -3,7 +3,7 @@ package client
 
 import java.time.OffsetTime
 import io.github.heavypunk.controller.client.server.ControllerServerClient
-import io.github.heavypunk.controller.state.ControllerStateClient
+import io.github.heavypunk.controller.client.state.ControllerStateClient
 
 trait ControllerClient {
     val servers: ControllerServerClient

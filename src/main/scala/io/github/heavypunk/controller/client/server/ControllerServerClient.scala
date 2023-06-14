@@ -1,7 +1,18 @@
 package io.github.heavypunk.controller
 package client.server
 
-import io.github.heavypunk.controller.client.contracts.server.{StartServerRequest, StartServerResponse, StopServerRequest, StopServerResponse}
+import io.github.heavypunk.controller.client.contracts.server.{
+    StartServerRequest,
+    StartServerResponse,
+    StopServerRequest,
+    StopServerResponse,
+    SendMessageRequest,
+    SendMessageResponse,
+    GetServerInfoResponse,
+    GetServerInfoRequest,
+    GetServerLogsRequest,
+    GetServerLogsResponse,
+}
 import io.github.heavypunk.controller.client.Settings
 import java.net.http.HttpRequest
 import org.apache.hc.core5.net.URIBuilder
@@ -15,6 +26,10 @@ import java.time.Duration
 trait ControllerServerClient {
     def startServer(request: StartServerRequest, timeout: Duration): StartServerResponse
     def stopServer(request: StopServerRequest, timeout: Duration): StopServerResponse
+    def sendMessage(request: SendMessageRequest, timeout: Duration): SendMessageResponse
+    def getServerInfo(request: GetServerInfoRequest, timeout: Duration): GetServerInfoResponse
+    def getServerLogs(request: GetServerLogsRequest, timeout: Duration): GetServerLogsResponse
+    def getServerLogsLastPage(timeout: Duration): GetServerLogsResponse
 }
 
 class CommonControllerServerClient (
@@ -71,5 +86,70 @@ class CommonControllerServerClient (
         
         val res = jsoner.readValue(response.body(), classOf[StopServerResponse])
         res
+    }
+
+    override def sendMessage(request: SendMessageRequest, timeout: Duration): SendMessageResponse = {
+        val uri = constructBaseUri()
+            .appendPath("messaging")
+            .appendPath("post")
+            .build
+        val content = jsoner.writeValueAsString(request)
+
+        val req = getBaseRequestBuilder.POST(HttpRequest.BodyPublishers.ofString(content))
+            .uri(uri)
+            .build
+        val client = HttpClient.newHttpClient
+        val response = client.send(req, BodyHandlers.ofString())
+        if (response.statusCode != 200)
+            throw new RuntimeException(s"[ControllerClient] failed to send message: ${response.statusCode}")
+        val res = jsoner.readValue(response.body, classOf[SendMessageResponse])
+        res
+    }
+
+    override def getServerInfo(request: GetServerInfoRequest, timeout: Duration): GetServerInfoResponse = {
+        val uri = constructBaseUri()
+            .appendPath("info")
+            .build
+        val content = jsoner.writeValueAsString(request)
+        val req = getBaseRequestBuilder.POST(HttpRequest.BodyPublishers.ofString(content))
+            .uri(uri)
+            .build
+        val client = HttpClient.newHttpClient
+        val response = client.send(req, BodyHandlers.ofString())
+        if (response.statusCode != 200)
+            throw new RuntimeException(s"[ControllerClient] failed get server info: ${response.statusCode}")
+        val res = jsoner.readValue(response.body, classOf[GetServerInfoResponse])
+        res
+    }
+
+    override def getServerLogs(request: GetServerLogsRequest, timeout: Duration): GetServerLogsResponse = {
+        val uri = constructBaseUri()
+            .appendPath("logs")
+            .appendPath("get-server-log-on-page")
+            .build
+        val content = jsoner.writeValueAsString(request)
+        val req = getBaseRequestBuilder.POST(HttpRequest.BodyPublishers.ofString(content))
+            .uri(uri)
+            .build
+        val client = HttpClient.newHttpClient
+        val response = client.send(req, BodyHandlers.ofString())
+        if (response.statusCode != 200)
+            throw new RuntimeException(s"[ControllerClient] failed to get server logs: ${response.statusCode}")
+        jsoner.readValue(response.body, classOf[GetServerLogsResponse])
+    }
+
+    override def getServerLogsLastPage(timeout: Duration): GetServerLogsResponse = {
+        val uri = constructBaseUri()
+            .appendPath("logs")
+            .appendPath("get-server-last-log")
+            .build
+        val req = getBaseRequestBuilder().POST(HttpRequest.BodyPublishers.noBody)
+            .uri(uri)
+            .build
+        val client = HttpClient.newHttpClient
+        val response = client.send(req, BodyHandlers.ofString())
+        if (response.statusCode != 200)
+            throw new RuntimeException(s"[ControllerClient] failed to get server logs: ${response.statusCode}")
+        jsoner.readValue(response.body, classOf[GetServerLogsResponse])
     }
 }

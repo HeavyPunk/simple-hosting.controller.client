@@ -1,4 +1,4 @@
-package io.github.heavypunk.controller.state
+package io.github.heavypunk.controller.client.state
 
 import io.github.heavypunk.controller.client.contracts.state.ControllerPingResponse
 import io.github.heavypunk.controller.client.Settings
@@ -9,6 +9,10 @@ import java.net.http.HttpClient
 import java.net.http.HttpResponse.BodyHandlers
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.databind.DeserializationFeature
+import io.github.heavypunk.controller.client.contracts.state.{
+    ControllerServerRunningResponse,
+    ControllerPingResponse
+}
 
 trait ControllerStateClient {
     def ping(): ControllerPingResponse
@@ -52,5 +56,17 @@ class CommonControllerStateClient (
         } catch {
             case e: RuntimeException => return ControllerPingResponse(null, false)
         }
+    }
+
+    def isGameServerRunning(): ControllerServerRunningResponse = {
+        val uri = constructBaseUri()
+            .appendPath("is-server-running")
+            .build
+        val req = getBaseRequestBuilder.GET()
+            .uri(uri)
+            .build
+        val resp = client.send(req, BodyHandlers.ofString())
+        var raw = jsoner.readValue(resp.body, classOf[ControllerServerRunningResponse])
+        raw
     }
 }
