@@ -1,13 +1,14 @@
 import Dependencies._
 
 ThisBuild / scalaVersion     := "2.13.10"
-ThisBuild / version          := "06.14.23.1"
+ThisBuild / version          := "01.12.24.1"
 ThisBuild / organization     := "io.github.heavypunk"
 ThisBuild / organizationName := "simplehosting"
 
 lazy val root = (project in file("."))
   .settings(
     name := "simple-hosting.controller.client",
+    publishTo := Some(Resolver.file("file", new File("./build/publish"))),
     libraryDependencies += munit % Test,
     libraryDependencies += "org.apache.httpcomponents.client5" % "httpclient5"          % "5.2.1",
     libraryDependencies += "com.fasterxml.jackson.module"     %% "jackson-module-scala" % "2.14.1"
