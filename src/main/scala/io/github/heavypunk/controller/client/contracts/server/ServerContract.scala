@@ -57,3 +57,9 @@ case class GetServerLogsResponse(
     val error: String,
     val success: Boolean
 )
+
+final case class CheckServerRunningResponse(
+    @JsonProperty("is-running") val isRunning: Boolean,
+    @JsonProperty("success") val success: Boolean,
+    @JsonProperty("error") val error: String,
+)

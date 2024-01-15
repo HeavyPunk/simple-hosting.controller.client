@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import java.net.http.HttpClient
 import java.net.http.HttpResponse.BodyHandlers
 import java.time.Duration
+import io.github.heavypunk.controller.client.contracts.server.CheckServerRunningResponse
 
 trait ControllerServerClient {
     def startServer(request: StartServerRequest, timeout: Duration): StartServerResponse
@@ -30,6 +31,7 @@ trait ControllerServerClient {
     def getServerInfo(request: GetServerInfoRequest, timeout: Duration): GetServerInfoResponse
     def getServerLogs(request: GetServerLogsRequest, timeout: Duration): GetServerLogsResponse
     def getServerLogsLastPage(timeout: Duration): GetServerLogsResponse
+    def checkServerRunning(timeout: Duration): CheckServerRunningResponse
 }
 
 class CommonControllerServerClient (
@@ -67,6 +69,24 @@ class CommonControllerServerClient (
             throw new RuntimeException(s"[ControllerClient] failed to stop server: code: ${response.statusCode()}")
 
         val res = jsoner.readValue(response.body(), classOf[StartServerResponse])
+        res
+    }
+
+    override def checkServerRunning(timeout: Duration): CheckServerRunningResponse = {
+        val uri = constructBaseUri()
+            .appendPath("is-running")
+            .build()
+
+        val req = getBaseRequestBuilder.GET()
+            .uri(uri)
+            .timeout(timeout)
+            .build()
+        val client = HttpClient.newHttpClient()
+        val response = client.send(req, BodyHandlers.ofString())
+        if (response.statusCode() >= 400)
+            throw new RuntimeException(s"[ControllerClient] failed to check server running: code: ${response.statusCode()}")
+
+        val res = jsoner.readValue(response.body(), classOf[CheckServerRunningResponse])
         res
     }
 
