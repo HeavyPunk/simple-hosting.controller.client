@@ -37,7 +37,7 @@ case class GetServerInfoRequest(
 )
 
 case class GetServerInfoResponse(
-    @JsonProperty("online-players") val onlinePlayers: List[String],
+    @JsonProperty("onlinePlayers") val onlinePlayers: List[String],
     val properties : Map[String, String],
     val error: String,
     val success: Boolean
