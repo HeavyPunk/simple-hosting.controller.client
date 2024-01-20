@@ -7,7 +7,8 @@ final case class PollTaskRequest(
 )
 
 final case class PollTaskResponse(
-    @JsonProperty("task-status") val taskId: String,
+    @JsonProperty("task-status") val taskStatus: String,
+    @JsonProperty("task-error") val taskError: String,
     @JsonProperty("success") val success: Boolean,
     @JsonProperty("error") val error: String
 )
