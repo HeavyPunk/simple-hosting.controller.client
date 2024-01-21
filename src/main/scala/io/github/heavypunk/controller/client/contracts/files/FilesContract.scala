@@ -36,3 +36,56 @@ final case class PullFileFromS3Response(
     @JsonProperty("success") val success: Boolean,
     @JsonProperty("error") val error: String,
 )
+
+final case class RemoveFileRequest(
+    @JsonProperty("path") val pathToFile: String,
+)
+
+final case class RemoveFileResponse(
+    @JsonProperty("task-id") val taskId: String,
+    @JsonProperty("success") val success: Boolean,
+    @JsonProperty("error") val error: String,
+)
+
+final case class CreateFileRequest(
+    @JsonProperty("path") val pathToFile: String,
+    @JsonProperty("content-base64") val contentBase64: String,
+)
+
+final case class CreateFileResponse(
+    @JsonProperty("task-id") val taskId: String,
+    @JsonProperty("success") val success: Boolean,
+    @JsonProperty("error") val error: String
+)
+
+final case class CreateDirectoryRequest(
+    @JsonProperty("path") val pathToDirectory: String,
+)
+
+final case class CreateDirectoryResponse(
+    @JsonProperty("task-id") val taskId: String,
+    @JsonProperty("success") val success: Boolean,
+    @JsonProperty("error") val error: String
+)
+
+final case class ListDirectoryRequest(
+    @JsonProperty("path") val pathToDirectory: String,
+)
+
+final case class ListDirectoryResponse(
+    @JsonProperty("files") val files: Seq[FileNode],
+    @JsonProperty("success") val success: Boolean,
+    @JsonProperty("error") val error: String
+)
+
+final case class FileNode(
+    @JsonProperty("path") val path: String,
+    @JsonProperty("type") val nodeType: String,
+    @JsonProperty("size") val size: Long,
+    @JsonProperty("name") val name: String,
+    @JsonProperty("extension") val extension: String
+)
+
+final case class AcceptTaskRequest(
+    @JsonProperty("task-id") val taskId: String,
+)
