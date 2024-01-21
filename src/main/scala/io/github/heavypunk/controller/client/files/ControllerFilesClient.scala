@@ -24,6 +24,8 @@ import io.github.heavypunk.controller.client.contracts.files.ListDirectoryReques
 import io.github.heavypunk.controller.client.contracts.files.ListDirectoryResponse
 import io.github.heavypunk.controller.client.contracts.files.AcceptTaskRequest
 import io.github.heavypunk.controller.client.contracts.files.CreateFileResponse
+import io.github.heavypunk.controller.client.contracts.files.GetFileContentRequest
+import io.github.heavypunk.controller.client.contracts.files.GetFileContentResponse
 
 trait ControllerFilesClient {
     def pushFileToS3(request: PushFileToS3Request, timeout: Duration): PushFileToS3Response
@@ -32,6 +34,7 @@ trait ControllerFilesClient {
     def createFile(request: CreateFileRequest, timeout: Duration): CreateFileResponse
     def createDirectory(request: CreateDirectoryRequest, timeout: Duration): CreateDirectoryResponse
     def listDirectory(request: ListDirectoryRequest, timeout: Duration): ListDirectoryResponse
+    def getFileContent(request: GetFileContentRequest, timeout: Duration): GetFileContentResponse
     def acceptTask(request: AcceptTaskRequest, timeout: Duration): Unit
     def pollTask(request: PollTaskRequest, timeout: Duration): PollTaskResponse
 }
@@ -188,5 +191,22 @@ class CommonControllerFilesClient (
         val response = client.send(req, BodyHandlers.ofString())
         if (response.statusCode() >= 400)
             throw new RuntimeException(s"[ControllerClient] failed to accept task: code: ${response.statusCode()}")
+    }
+
+    override def getFileContent(request: GetFileContentRequest, timeout: Duration): GetFileContentResponse = {
+        val uri = constructBaseUri()
+            .appendPath("get-file-content-base64")
+            .build()
+        val content = jsoner.writeValueAsString(request)
+        val req = getBaseRequestBuilder.POST(HttpRequest.BodyPublishers.ofString(content))
+            .uri(uri)
+            .timeout(timeout)
+            .build()
+        val client = HttpClient.newHttpClient()
+        val response = client.send(req, BodyHandlers.ofString())
+        if (response.statusCode() >= 400)
+            throw new RuntimeException(s"[ControllerClient] failed to get file content: code: ${response.statusCode()}")
+        val res = jsoner.readValue(response.body(), classOf[GetFileContentResponse])
+        res
     }
 }

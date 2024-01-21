@@ -89,3 +89,11 @@ final case class FileNode(
 final case class AcceptTaskRequest(
     @JsonProperty("task-id") val taskId: String,
 )
+
+final case class GetFileContentRequest(
+    @JsonProperty("path") val pathToFile: String,
+)
+
+final case class GetFileContentResponse(
+    @JsonProperty("content-base64") val contentBase64: String,
+)
