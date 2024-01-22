@@ -96,4 +96,6 @@ final case class GetFileContentRequest(
 
 final case class GetFileContentResponse(
     @JsonProperty("content-base64") val contentBase64: String,
+    @JsonProperty("success") val success: Boolean,
+    @JsonProperty("error") val error: String
 )
